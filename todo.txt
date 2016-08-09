@@ -1,0 +1,41 @@
+
+How to submit a patch?
+----------------------
+
+In case you want to contribute, here is how to retrieve the current source
+snapshot:
+
+    $ TGZ="http://vladz.devzero.fr/svn/projects/fsnoop/releases/fsnoop-current.tar.gz"
+    $ wget -q -O - ${TGZ} | tar -xzvf -
+    $ cp -a trunk trunk.old
+
+Modify the sources in the "trunk" directory.  Use "indent -brf -kr -i 2" to
+indent your code and generate the patch with:
+
+    $ TZ=UTC diff -aburN trunk.old trunk > patch-name_revision.patch
+
+Send the file to vladz@devzero.fr.
+
+
+Todo list:
+----------
+
+- In the "-fd" option, when we stop the monitor mode, we should only
+  display the files opened by Fsnoop, and not all the fd descriptors opened
+  by the process (stdin, stdout, pipes, etc.).
+
+- In the "-fd" option, instead of a shell, a menu can be bound with the
+  possibility to display/copy/rewind/close file descriptors.
+
+- Add support for FreeBSD platform with kqueue and Solaris (see [3]).
+
+
+Additional information:
+------------------------
+
+[3] http://code.google.com/p/pnotify/
+    https://github.com/skirge/fsnotifier-freebsd
+    https://blogs.oracle.com/darren/entry/file_notification_in_opensolaris_and
+    https://github.com/unbit/uwsgi/blob/master/core/event.c
+    http://sourcecodebrowser.com/policykit/0.9/polkit-context_8c_source.html
+

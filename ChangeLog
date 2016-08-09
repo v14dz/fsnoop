@@ -1,0 +1,88 @@
+*** 2016/08/09: Version 3.4 ***
+
+  - Remove a compilation warning (with recent version of gcc).
+  - Fix segfault when the kill option (-k) was used without given filename.
+  - Merge project on Github (update and rename README into README.md).
+
+*** 2013/07/28: Version 3.3 ***
+
+  - Introduce more characters to determine the file type.  Until now,
+    only 'd' (for directory) and '-' (for other types) were displayed.
+  - Backup output file with the '~' suffix if it already exists ("-o"
+    argument).  This prevent existing log file from being accidentally
+    overwritten.
+  - Dislay microseconds while using "-t".
+  - Add the "-O3" compilation option to "Makefile".
+  - Properly close the passwd and group databases after processing.
+  - Disable buffering on stdout when this stream is redirected to a file
+    (with "-o").
+  - Rename "inotify.{c,h}" in "event.{c,h}".
+  - Minor changes and bug fixes.
+
+*** 2013/06/19: Version 3.2 ***
+
+  - Change linker options order to make the Makefile work on Ubuntu and
+    recent gcc releases (larry).
+  - Add the "-e" option to target every Inotify events (IN_ALL_EVENTS) and
+    not only the default ones (INOTIFY_BITS).  Also, this option displays
+    the full event names instead of the action character.
+  - Load passwd and group databases in memory for better performances when
+    resolving ID into {user,group}names, and also to remove calls to
+    functions getpwent() and getgrent() (they produced an infinite loop
+    when monitoring /etc with "-e" option).
+  - Bug fix:  when "-fd" and "-r" are specified, launch action_ropenfd()
+    instead of action_recursive().
+
+*** 2013/05/06: Version 3.1 ***
+
+  - Allows the paymod mechanism to launch the payload() function when a
+    specific process is started, and thus target filenames based on PID
+    number (for instance "/tmp/file.$$").
+  - Variables title and file are now optional in paymods.
+  - Add a Makefile rule for paymod compilation ("make paymod-file.so").
+  - Change output messages when sending ctrl-c while a paymod is loaded
+    (larry).
+
+*** 2013/04/22: Version 3.0 ***
+
+  - To improve performance, a unique function pointer is initialized
+    (depending on the settled options) and called when event occurs.  This
+    avoid a bunch of conditional expressions (i.e. waste of time).
+  - Add the "-p" to load dynamic library that contains a payload code to
+    exploit a file race condition vulnerability.
+  - Improve the kill option "-k" to specify a file that doesn't exist at
+    startup (SIGCONT is sent when file is created).
+  - Add a "--version|-v" option to display the current release version.
+  - Minor bug fixes.
+
+*** 2013/01/27: Version 2.0 ***
+
+  - New features:
+
+    - Add the "-r" option to monitor subdirectories recursively.
+    - Add the "-fd" option to open readable files when it's possible.
+    - Force the "-t" option (prefix each line with time of day) when ran
+      as a daemon.
+
+  - Bug fixes: 
+
+    - Verify that output file (specified with "-o") isn't in a monitored
+      directory (to avoid an infinite loop).
+    - Add './' in the possible prefixes of an absolute path.
+
+*** 2012/08/22: Version 1.2 ***
+
+  - Tool renamed into fsnoop.
+
+*** 2012/08/18: Version 1.1 ***
+
+  - To handle boolean options, use a single g_options attribute with mask
+    instead of multiple int attributes.
+  - Move functions from output.c to the util.c and remove obsolete output.c
+    and output.h.
+  - Add the "-o" option to redirect standard output to a given filename.
+  - Add the "-d" option to run fsnoop as a daemon.
+
+*** 2012/07/12: Version 1.0 ***
+
+  - Initial version.
