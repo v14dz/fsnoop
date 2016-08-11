@@ -3,21 +3,22 @@
 ## Introduction
 
 Fsnoop is a tool to monitor file operations on GNU/Linux systems by using
-the Inotify mechanism.  Its primary purpose is to help detecting file race
-condition vulnerabilities and since version 3, to exploit them with
-loadable DSO modules (also called "payload modules" or "paymods").
+the [Inotify](https://en.wikipedia.org/wiki/Inotify) mechanism.  Its
+primary purpose is to help detecting file race condition vulnerabilities
+and since version 3, to exploit them with loadable DSO modules (also called
+"payload modules" or "paymods").
 
 ## Installation
 
-The kernel option ``CONFIG_INOTIFY_USER`` is required.  Check the current
-system with the following command:
+The kernel option ``CONFIG_INOTIFY_USER`` is required, check this parameter
+with the following command:
 
     $ grep CONFIG_INOTIFY_USER /boot/config-`uname -r`
     CONFIG_INOTIFY_USER=y
 
 Then download the latest tarball from [http://vladz.devzero.fr/fsnoop.php]().
 
-Untar and compile with "``make``".
+And compile with "``make``".
 
 ## Usage
 
@@ -44,7 +45,7 @@ Here is the output of the ``--help`` option:
 
 ## Output description
 
-In file monitoring mode, Fsnoop output is as shown below:
+During filesystem activity monitoring, Fsnoop output looks as shown below:
 
     $ ./fsnoop
     [+] monitor /dev/shm
@@ -59,9 +60,9 @@ In file monitoring mode, Fsnoop output is as shown below:
 
 The first four lines tells which directories are being monitored.  By
 default, those directories are system's world-writable directories.
-Following lines are Fsnoop events (one per line).
+Next lines are Fsnoop events (one per line).
 
-An event begins with an action character (placed between brackets) where:
+An event begins with an action character (placed between brackets):
 
   - 'C' is for Create;
   - 'M' is for Modify (means that metadata changed: permissions,
@@ -69,22 +70,22 @@ An event begins with an action character (placed between brackets) where:
   - 'U' is for Update (means that file content was modified);
   - 'D' is for Delete.
 
-We will see later that we can display full Inotify event names
-(``IN_ACCESS``, ``IN_ATTRIB``, etc.) instead of this action character.  By
+We will see later that we can display Inotify event full names (i.e.
+``IN_ACCESS``, ``IN_ATTRIB``, etc.) instead of this action character.  By
 default, the action character is chosen for simplicity and light output.
 
 This action character is followed by an output similar to the "``ls -l``"
-command (for a better readability).  For any reason, if Fsnoop isn't able
-to stat() the file, the "ls-like" output is replaced by a shorter string
+command (for a better readability).  If for any reason, Fsnoop isn't able
+to ``stat()`` the file, the "ls-like" output is replaced by a shorter string
 (see the last line of the example above).  This string contains the
-filename preceded by the file type information where:
+filename preceded by the file type information (also on one character):
 
   - 'F' is for File
   - 'D' is for Directory
 
 ## Basic options
 
-To monitor activities in specific directories:
+To monitor activities in specific directories ("``/etc``" and "``/tmp``"):
 
     $ ./fsnoop /etc,/tmp
 
@@ -101,7 +102,7 @@ To monitor activities just during a specific process duration:
     [M] -rw------- 1 root root 0  Wed Apr 10 13:17:13 2013 /etc/file1
 
 To monitor new directories recursively (may require a more favorable
-scheduling):
+scheduling priority):
 
     # nice -n -20 ./fsnoop -r /tmp
     [+] monitor /tmp
@@ -121,8 +122,8 @@ that with this option, every Inotify events are monitored):
 
 ### Send SIGSTOP/SIGCONT signals (-k)
 
-The "``-k``" option automatically sends the SIGSTOP signal to a process when
-an event occurred on a specific file.  This signal stops the process
+The "``-k``" option automatically sends the ``SIGSTOP`` signal to a process
+when an event occurred on a specific file.  This signal stops the process
 execution until SIGCONT is sent (see ``kill(1)``).  For instance, the
 following command can be used to exploit CVE-2011-4029:
 
@@ -138,7 +139,7 @@ The "``-fd``" option opens every new files.  This is used to keep an eye
 on their content even when the file is removed or even better, when its
 permissions changed (read access removed).  Yes, on Linux kernel, a file
 descriptor isn't affected when the corresponding filename sees its
-permission changed.
+permission/ownership changed.
 
 When the monitor mode is stopped with the "ctrl-c" sequence, a shell is
 bound, giving an access to opened file descriptors.  To disclose the
@@ -236,7 +237,7 @@ would output.
 Why launching the payload() when a process starts?  Well, for example, to
 predict a filename based on a process ID.
 
-If you set the proc_name variable AND specify a file with the "``HEREPID``"
+If you set the ``proc_name`` variable AND specify a file with the "``HEREPID``"
 string in its name, this string is substituted by the process ID of the
 program.  Thus, in certain condition, you may be able to create a
 file/symlink based on the PID before the real program does.
