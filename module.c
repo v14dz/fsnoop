@@ -139,8 +139,14 @@ void load_module(void) {
 void substitute_process_id(void) {
 
     char *pid;
+    int rc;
 
     pid = loop_pgrep(g_paymod->proc_name);
 
-    sub_str(PIDSTR, pid, g_paymod->file);
+    rc = sub_str(PIDSTR, pid, g_paymod->file);
+
+    if (rc < 0) {
+        fprintf(stderr, "substitute_process_id() failed");
+        exit(1);
+    }
 }

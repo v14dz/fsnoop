@@ -125,12 +125,7 @@ char *get_path(char *file) {
 
     if ((strncmp(file, "./", 2) == 0) || (file[0] == '/')) {
 
-        if ((result = malloc(strlen(file) + 1)) == NULL) {
-            fprintf(stderr, "Error: malloc() failed.\n");
-            exit(1);
-        }
-
-        strncpy(result, file, strlen(file));
+        result = file;
 
     } else {
 
@@ -333,8 +328,8 @@ void clean_path_str(char *path) {
  */
 char *dirname(char *pathname) {
 
-    char *ptr;
-    char *dir_path;
+    char *ptr = NULL;
+    char *dir_path = NULL;
 
     dir_path = malloc(PATH_MAX);
 
@@ -343,11 +338,10 @@ char *dirname(char *pathname) {
         exit(1);
     }
 
-    strncpy(dir_path, pathname, strlen(pathname) + 1);
-
-    ptr = dir_path;
+    strncpy(dir_path, pathname, PATH_MAX);
 
     if ((ptr = strrchr(dir_path, '/')) == NULL) {
+        free(dir_path);
         return strdup(".");
     }
 
@@ -463,7 +457,14 @@ int sub_str(char *pattern, char *s, char *src) {
     char *ptr, *p;
     char *end = NULL;
 
-    if (!(ptr = strstr(src, pattern)))
+    if (strlen(s) > strlen(pattern)) {
+        fprintf(stderr, "sub_dir() failed (len(s) > len(pattern)).\n");
+        return -1;
+    }
+
+    ptr = strstr(src, pattern);
+
+    if (!ptr)
         return -1;
 
     /* we backup the end of the string if any (i.e. after the pattern). */
@@ -476,9 +477,10 @@ int sub_str(char *pattern, char *s, char *src) {
         *ptr++ = *p++;
 
     if (end)
-        strncpy(ptr, end, strlen(end) + 1);
-    else
-        *ptr = 0;
+        while(*end)
+            *ptr++ = *end++;
+
+    *ptr = 0;
 
     return 0;
 }

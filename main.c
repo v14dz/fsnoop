@@ -253,14 +253,7 @@ static int check_params(char **argv) {
                 exit(1);
             }
 
-            g_params->output_file = (char *) malloc(strlen(argv[i]) + 1);
-
-            if (!g_params->output_file) {
-                fprintf(stderr, "check_params(): malloc failed.\n");
-                exit(1);
-            }
-
-            strncpy(g_params->output_file, argv[i], strlen(argv[i]));
+            g_params->output_file = argv[i];
             i++;
 
             continue;
