@@ -16,9 +16,7 @@ with the following command:
     $ grep CONFIG_INOTIFY_USER /boot/config-`uname -r`
     CONFIG_INOTIFY_USER=y
 
-Then download the latest tarball from [http://vladz.devzero.fr/fsnoop.php]().
-
-And compile with "``make``".
+Clone this repository and compile with "``make``".
 
 ## Usage
 
@@ -216,7 +214,7 @@ right after "``/var/lock/prog.lck``" is created:
     char file[]    = "/var/lock/prog.lck";
     uint32_t mask  = IN_CREATE;
 
-You can find a complete list of inotify event masks in the man page of
+You can find a complete list of Inotify event masks in the man page of
 ``inotify(7)``.
 
 Also, to postpone the call to payload(), for instance if you don't want it
