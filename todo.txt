@@ -9,7 +9,7 @@ snapshot:
     $ wget -q -O - ${TGZ} | tar -xzvf -
     $ cp -a trunk trunk.old
 
-Modify the sources in the "trunk" directory.  Use "indent -brf -kr -i 2" to
+Modify the sources in the "trunk" directory.  Use "indent -i4 -brf -kr -nut" to
 indent your code and generate the patch with:
 
     $ TZ=UTC diff -aburN trunk.old trunk > patch-name_revision.patch
