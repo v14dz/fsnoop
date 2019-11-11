@@ -26,26 +26,26 @@
  */
 char *name_from_id(struct id_name *root, uid_t id) {
 
-  char *str;
+    char *str;
 
-  while (root->next) {
+    while (root->next) {
 
-    if (root->id == id)
-      return root->name;
+        if (root->id == id)
+            return root->name;
 
-    root = root->next;
-  }
+        root = root->next;
+    }
 
-  str = malloc(12);
-  
-  if (! str) {
-    fprintf(stderr, "name_from_id(): malloc failed.\n");
-    exit(1);
-  }
+    str = malloc(12);
 
-  sprintf(str, "%d", id);
+    if (!str) {
+        fprintf(stderr, "name_from_id(): malloc failed.\n");
+        exit(1);
+    }
 
-  return str;
+    sprintf(str, "%d", id);
+
+    return str;
 }
 
 /* Builds a linked list of id_name structures from the passwd database.
@@ -53,35 +53,35 @@ char *name_from_id(struct id_name *root, uid_t id) {
  */
 struct id_name *load_passwd() {
 
-  struct passwd *p;
-  struct id_name *root, *u, *u_save;
-
-  u = malloc(sizeof(struct id_name));
-
-  root = u;
-  u->next = NULL;
-
-  while ((p = getpwent()) != NULL) {
-
-    u->name = strdup(p->pw_name);
-    u->id = p->pw_uid;
-
-    u_save = u;
+    struct passwd *p;
+    struct id_name *root, *u, *u_save;
 
     u = malloc(sizeof(struct id_name));
 
-    if (! u) {
-      fprintf(stderr, "load_passwd(): malloc failed.\n");
-      exit(1);
+    root = u;
+    u->next = NULL;
+
+    while ((p = getpwent()) != NULL) {
+
+        u->name = strdup(p->pw_name);
+        u->id = p->pw_uid;
+
+        u_save = u;
+
+        u = malloc(sizeof(struct id_name));
+
+        if (!u) {
+            fprintf(stderr, "load_passwd(): malloc failed.\n");
+            exit(1);
+        }
+
+        u_save->next = u;
+        u->next = NULL;
     }
 
-    u_save->next = u;
-    u->next = NULL;
-  }
+    endpwent();
 
-  endpwent();
-
-  return root;
+    return root;
 }
 
 /* Builds a linked list of id_name structures from the group database.
@@ -89,34 +89,34 @@ struct id_name *load_passwd() {
  */
 struct id_name *load_group() {
 
-  struct group *g;
+    struct group *g;
 
-  struct id_name *root, *u, *u_save;
-
-  u = malloc(sizeof(struct id_name));
-
-  root = u;
-  u->next = NULL;
-
-  while ((g = getgrent()) != NULL) {
-
-    u->name = strdup(g->gr_name);
-    u->id = g->gr_gid;
-
-    u_save = u;
+    struct id_name *root, *u, *u_save;
 
     u = malloc(sizeof(struct id_name));
 
-    if (! u) {
-      fprintf(stderr, "load_group(): malloc failed.\n");
-      exit(1);
+    root = u;
+    u->next = NULL;
+
+    while ((g = getgrent()) != NULL) {
+
+        u->name = strdup(g->gr_name);
+        u->id = g->gr_gid;
+
+        u_save = u;
+
+        u = malloc(sizeof(struct id_name));
+
+        if (!u) {
+            fprintf(stderr, "load_group(): malloc failed.\n");
+            exit(1);
+        }
+
+        u_save->next = u;
+        u->next = NULL;
     }
 
-    u_save->next = u;
-    u->next = NULL;
-  }
+    endgrent();
 
-  endgrent();
-
-  return root;
+    return root;
 }

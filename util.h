@@ -42,9 +42,9 @@ extern char *loop_pgrep(char *);
 extern int sub_str(char *, char *, char *);
 
 struct uperm {
-  mode_t mode;
-  char flag;
-  int indice;
+    mode_t mode;
+    char flag;
+    int indice;
 };
 
 #endif

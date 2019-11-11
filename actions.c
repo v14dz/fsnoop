@@ -27,114 +27,114 @@ static char file[NAME_MAX];
  */
 void action_recursive() {
 
-  /* if new event is a dir we update the Inotify watch descriptor. */
-  if (g_event->mask & IN_ISDIR) {
+    /* if new event is a dir we update the Inotify watch descriptor. */
+    if (g_event->mask & IN_ISDIR) {
 
-    sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
-    monitor_update(file);
-  }
+        sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
+        monitor_update(file);
+    }
 
-  print_event(0);
+    print_event(0);
 }
 
 /* Called when do_openfd is settled.
  */
 void action_openfd() {
 
-  print_event(snipe_fd());
+    print_event(snipe_fd());
 }
 
 /* Called when do_recursive and do_openfd options are settled.
  */
 void action_ropenfd() {
 
-  /* if new event is a dir we update the Inotify watch descriptor. */
-  if (g_event->mask & IN_ISDIR) {
+    /* if new event is a dir we update the Inotify watch descriptor. */
+    if (g_event->mask & IN_ISDIR) {
 
-    sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
-    monitor_update(file);
+        sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
+        monitor_update(file);
 
-  } else {
+    } else {
 
-    print_event(snipe_fd());
-  }
+        print_event(snipe_fd());
+    }
 }
 
 /* Called by default (no option settled).
  */
 void action_normal_output() {
 
-  print_event(0);
+    print_event(0);
 }
 
 /* Called when do_kill is settled. 
  */
 void action_kill() {
 
-  sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
+    sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
 
-  if (strncmp(file, g_params->target_file, strlen(g_params->target_file))
-      == 0) {
+    if (strncmp(file, g_params->target_file, strlen(g_params->target_file))
+        == 0) {
 
-    kill(g_params->cmd->pid, 19);
-    print_event(0);
-    printf("*** PID %d stopped, type [Enter] to resume execution: ",
-	   g_params->cmd->pid);
+        kill(g_params->cmd->pid, 19);
+        print_event(0);
+        printf("*** PID %d stopped, type [Enter] to resume execution: ",
+               g_params->cmd->pid);
 
-    /* we don't want to send SIGSTOP anymore, so we can now return to a
-     * basic action. */
-    g_params->run_action = &action_normal_output;
+        /* we don't want to send SIGSTOP anymore, so we can now return to a
+         * basic action. */
+        g_params->run_action = &action_normal_output;
 
-    getchar();
+        getchar();
 
-    kill(g_params->cmd->pid, 18);
-    printf("*** PID %d resumed ...\n", g_params->cmd->pid);
-  }
+        kill(g_params->cmd->pid, 18);
+        printf("*** PID %d resumed ...\n", g_params->cmd->pid);
+    }
 
-  /* If targeted file is /var/tmp/abc/def and /var/tmp/abc does not exist,
-   * we want to update the watch descriptor. */
-  if (g_event->mask & IN_ISDIR) {
-    monitor_update(file);
-  }
+    /* If targeted file is /var/tmp/abc/def and /var/tmp/abc does not exist,
+     * we want to update the watch descriptor. */
+    if (g_event->mask & IN_ISDIR) {
+        monitor_update(file);
+    }
 }
 
 /* Called when do_payload is settled. 
  */
 void action_payload() {
 
-  sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
+    sprintf(file, "%s/%s", get_fullpath_from_wd(), g_event->name);
 
-  if (strncmp(file, g_paymod->file, strlen(g_paymod->file)) == 0) {
+    if (strncmp(file, g_paymod->file, strlen(g_paymod->file)) == 0) {
 
-    if ((*g_paymod->count) == 0) {
+        if ((*g_paymod->count) == 0) {
 
-      g_paymod->payload();	/* execute evil code */
-      unload_module();		/* unload module (execute "destructor" routine) */
-      exit(0);			/* we've done. */
+            g_paymod->payload();        /* execute evil code */
+            unload_module();    /* unload module (execute "destructor" routine) */
+            exit(0);            /* we've done. */
 
-    } else {
+        } else {
 
-      (*g_paymod->count)--;
+            (*g_paymod->count)--;
 
+        }
     }
-  }
 
-  /* If targeted file is /var/tmp/abc/def and /var/tmp/abc does not exist,
-   * we want to update the watch descriptor. */
-  if (g_event->mask & IN_ISDIR) {
-    monitor_update(file);
-  }
+    /* If targeted file is /var/tmp/abc/def and /var/tmp/abc does not exist,
+     * we want to update the watch descriptor. */
+    if (g_event->mask & IN_ISDIR) {
+        monitor_update(file);
+    }
 }
 
 /* Called when do_payload and g_paymod->proc_name are settled. 
  */
 void action_payload_proc() {
 
-  /* need to wait for the process to start, and substite the PID in the
-   * filename specified in the paymod.*/
-  substitute_process_id();
+    /* need to wait for the process to start, and substite the PID in the
+     * filename specified in the paymod.*/
+    substitute_process_id();
 
-  g_paymod->payload();		/* execute evil code */
-  unload_module();		/* unload module (execute "destructor" routine) */
-  exit(0);			/* we've done. */
+    g_paymod->payload();        /* execute evil code */
+    unload_module();            /* unload module (execute "destructor" routine) */
+    exit(0);                    /* we've done. */
 }

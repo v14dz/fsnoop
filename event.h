@@ -33,9 +33,9 @@ extern int snipe_fd(void);
 extern char *get_fullpath_from_wd(void);
 
 struct event_conv {
-  uint32_t mask;
-  char *str;
-  char *c;
+    uint32_t mask;
+    char *str;
+    char *c;
 };
 
 #endif

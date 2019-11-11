@@ -17,9 +17,9 @@
 
 struct id_name {
 
-  char *name;
-  uid_t id;
-  struct id_name *next;
+    char *name;
+    uid_t id;
+    struct id_name *next;
 };
 
 extern char *name_from_id(struct id_name *, uid_t);

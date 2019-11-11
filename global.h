@@ -38,15 +38,15 @@ extern int8_t g_options;
 
 struct command {
 
-  char *cmdline[PATH_MAX + ARG_MAX];
-  pid_t pid;
+    char *cmdline[PATH_MAX + ARG_MAX];
+    pid_t pid;
 };
 
 struct parameters {
 
-  char *files[MAX_MONITORED_FILES], *target_file, *output_file;
-  void (*run_action) ();
-  struct command *cmd;
+    char *files[MAX_MONITORED_FILES], *target_file, *output_file;
+    void (*run_action)();
+    struct command *cmd;
 };
 
 extern struct parameters *g_params;

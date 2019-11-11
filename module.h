@@ -14,10 +14,10 @@
 #define PIDSTR   "HEREPID"
 
 struct paymod {
-  void (*payload) ();
-  char *title, *dso, *file, *proc_name;
-  int *count;
-  uint32_t *mask;
+    void (*payload)();
+    char *title, *dso, *file, *proc_name;
+    int *count;
+    uint32_t *mask;
 };
 
 extern void load_module(void);

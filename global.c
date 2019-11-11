@@ -22,11 +22,11 @@
  * writable).
  */
 char *writable_dirs[] = {
-  "/dev/shm",
-  "/tmp",
-  "/var/lock",
-  "/var/tmp",
-  NULL
+    "/dev/shm",
+    "/tmp",
+    "/var/lock",
+    "/var/tmp",
+    NULL
 };
 
 /* 8-bits variable to store options. 

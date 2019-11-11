@@ -32,25 +32,25 @@ static void *handle;
  */
 static void ctrlc_handler() {
 
-  signal_caught = 1;
+    signal_caught = 1;
 
-  printf("\n[+] Signal caught.\n");
-  unload_module();
+    printf("\n[+] Signal caught.\n");
+    unload_module();
 
-  exit(0);
+    exit(0);
 }
 
 /* Unloads the module.
  */
 void unload_module(void) {
 
-  if (!signal_caught)
-    mprintf("Exploitation done.\n");
+    if (!signal_caught)
+        mprintf("Exploitation done.\n");
 
-  mprintf("Unloading module.\n");
+    mprintf("Unloading module.\n");
 
-  if (dlclose(handle) != 0)
-    mprintf("Error: dlclose() failed.\n");
+    if (dlclose(handle) != 0)
+        mprintf("Error: dlclose() failed.\n");
 }
 
 /* Loads the DSO, retrieve module parameters and feed the g_paymod
@@ -58,79 +58,79 @@ void unload_module(void) {
  */
 void load_module(void) {
 
-  if (!(handle = dlopen(g_paymod->dso, RTLD_LAZY))) {
-    mprintf("Error: dlopen() failed.\n");
-    exit(1);
-  }
-
-  if (!(g_paymod->title = dlsym(handle, "title"))) {
-    g_paymod->title = strdup("** Untitled paymod **");
-  }
-
-  if (!(g_paymod->file = dlsym(handle, "file"))) {
-    g_paymod->file = strdup("/dev/null");
-  }
-
-  g_paymod->proc_name = dlsym(handle, "proc_name");
-
-  if (!(g_paymod->count = (int *) dlsym(handle, "count"))) {
-    /* count symbol not found, we set a default one (0). */
-    g_paymod->count = malloc(sizeof(int));
-
-    if (! g_paymod->count) {
-      fprintf(stderr, "load_module(): malloc failed.\n");
-      exit(1);
+    if (!(handle = dlopen(g_paymod->dso, RTLD_LAZY))) {
+        mprintf("Error: dlopen() failed.\n");
+        exit(1);
     }
 
-    *g_paymod->count = 0;
-  }
-
-  if (!(g_paymod->mask = (uint32_t *) dlsym(handle, "mask"))) {
-    /* mask symbol not found, we set a default one (DFT_INOTIFY_BITS) */
-    g_paymod->mask = malloc(sizeof(uint32_t));
-
-    if (! g_paymod->mask) {
-      fprintf(stderr, "load_module(): malloc failed.\n");
-      exit(1);
+    if (!(g_paymod->title = dlsym(handle, "title"))) {
+        g_paymod->title = strdup("** Untitled paymod **");
     }
 
-    *g_paymod->mask = DFT_INOTIFY_BITS;
-  }
+    if (!(g_paymod->file = dlsym(handle, "file"))) {
+        g_paymod->file = strdup("/dev/null");
+    }
 
-  if (!(g_paymod->payload = dlsym(handle, "payload"))) {
-    mprintf("Error: payload symbol not found.\n");
-    exit(1);
-  }
+    g_paymod->proc_name = dlsym(handle, "proc_name");
 
-  mprintf("%s\n", g_paymod->title);
+    if (!(g_paymod->count = (int *) dlsym(handle, "count"))) {
+        /* count symbol not found, we set a default one (0). */
+        g_paymod->count = malloc(sizeof(int));
 
-  if (!g_paymod->proc_name) {
+        if (!g_paymod->count) {
+            fprintf(stderr, "load_module(): malloc failed.\n");
+            exit(1);
+        }
 
-    mprintf("payload=[%p] file=[%s] mask=[%s] count=[%d]\n",
-	    g_paymod->payload, g_paymod->file,
-	    imask_to_str(*g_paymod->mask), *g_paymod->count);
+        *g_paymod->count = 0;
+    }
 
-  } else {
+    if (!(g_paymod->mask = (uint32_t *) dlsym(handle, "mask"))) {
+        /* mask symbol not found, we set a default one (DFT_INOTIFY_BITS) */
+        g_paymod->mask = malloc(sizeof(uint32_t));
 
-    if (strstr(g_paymod->file, PIDSTR)) {
-      mprintf("payload=[%p] file=[%s]\n",
-	      g_paymod->payload, g_paymod->file);
+        if (!g_paymod->mask) {
+            fprintf(stderr, "load_module(): malloc failed.\n");
+            exit(1);
+        }
 
-      mprintf("waiting for command: \"%s\"\n", g_paymod->proc_name);
+        *g_paymod->mask = DFT_INOTIFY_BITS;
+    }
 
-    } else if (strstr(g_paymod->file, "/dev/null")) {
+    if (!(g_paymod->payload = dlsym(handle, "payload"))) {
+        mprintf("Error: payload symbol not found.\n");
+        exit(1);
+    }
 
-      mprintf("payload=[%p]\n", g_paymod->payload);
+    mprintf("%s\n", g_paymod->title);
+
+    if (!g_paymod->proc_name) {
+
+        mprintf("payload=[%p] file=[%s] mask=[%s] count=[%d]\n",
+                g_paymod->payload, g_paymod->file,
+                imask_to_str(*g_paymod->mask), *g_paymod->count);
+
     } else {
 
-      mprintf("payload=[%p] file=[%s]\n", g_paymod->payload,
-	      g_paymod->file);
-    }
-  }
+        if (strstr(g_paymod->file, PIDSTR)) {
+            mprintf("payload=[%p] file=[%s]\n",
+                    g_paymod->payload, g_paymod->file);
 
-  /* now the module is correctly loaded, destructor routines should be
-   * executed on ctrl-c. */
-  signal(SIGINT, ctrlc_handler);
+            mprintf("waiting for command: \"%s\"\n", g_paymod->proc_name);
+
+        } else if (strstr(g_paymod->file, "/dev/null")) {
+
+            mprintf("payload=[%p]\n", g_paymod->payload);
+        } else {
+
+            mprintf("payload=[%p] file=[%s]\n", g_paymod->payload,
+                    g_paymod->file);
+        }
+    }
+
+    /* now the module is correctly loaded, destructor routines should be
+     * executed on ctrl-c. */
+    signal(SIGINT, ctrlc_handler);
 }
 
 /* Waits for the process name g_paymod->proc_name and replaces the PIDSTR
@@ -138,9 +138,9 @@ void load_module(void) {
  */
 void substitute_process_id(void) {
 
-  char *pid;
+    char *pid;
 
-  pid = loop_pgrep(g_paymod->proc_name);
+    pid = loop_pgrep(g_paymod->proc_name);
 
-  sub_str(PIDSTR, pid, g_paymod->file);
+    sub_str(PIDSTR, pid, g_paymod->file);
 }
