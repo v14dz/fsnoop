@@ -29,7 +29,7 @@
 #include "id.h"
 
 #define PROG_NAME               "fsnoop"
-#define PROG_VERSION            "3.4"
+#define PROG_VERSION            "3.5"
 
 /* print fatal error and exit. */
 #define fatal(x...)   { fprintf(stderr, x); exit(1); }
