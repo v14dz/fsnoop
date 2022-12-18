@@ -296,7 +296,7 @@ int monitor_watch(int do_fork) {
 
             g_event = (struct inotify_event *) &buf[i];
 
-            if (g_event->len && run_action) // check that run_action is not null
+            if (g_event->len && g_params->run_action) // check that run_action is not null
                 g_params->run_action();
 
             i += sizeof(struct inotify_event) + g_event->len;
