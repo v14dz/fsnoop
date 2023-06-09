@@ -233,7 +233,7 @@ void monitor_update(char *newfile) {
 
 int monitor_watch(int do_fork) {
 
-    char *buf;
+    char *buf = NULL;
     int len, bs, i, child_pid;
 
     if (do_fork && (child_pid = fork()))
@@ -247,6 +247,8 @@ int monitor_watch(int do_fork) {
         fprintf(stderr, "monitor_watch(): malloc failed.\n");
         exit(1);
     }
+
+    bzero(buf, bs);
 
     for (i = 0; g_params->files[i]; i++)
         printf("[+] monitor %s\n", g_params->files[i]);
@@ -290,7 +292,7 @@ int monitor_watch(int do_fork) {
 
         i = 0;
 
-        len = read(g_ifd, buf, bs);
+        len = read(g_ifd, buf, bs - 1);
 
         while (i < len) {
 

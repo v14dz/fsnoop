@@ -338,7 +338,8 @@ char *dirname(char *pathname) {
         exit(1);
     }
 
-    strncpy(dir_path, pathname, PATH_MAX);
+    bzero(dir_path, PATH_MAX);
+    strncpy(dir_path, pathname, PATH_MAX - 1);
 
     if ((ptr = strrchr(dir_path, '/')) == NULL) {
         free(dir_path);
