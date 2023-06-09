@@ -106,9 +106,15 @@ void load_module(void) {
 
     if (!g_paymod->proc_name) {
 
+        /* imask_str is never be NULL as imask_to_str() exit(1) on malloc
+         * failure. */
+        char *imask_str = imask_to_str(*g_paymod->mask);
+
         mprintf("payload=[%p] file=[%s] mask=[%s] count=[%d]\n",
                 g_paymod->payload, g_paymod->file,
-                imask_to_str(*g_paymod->mask), *g_paymod->count);
+                imask_str, *g_paymod->count);
+
+        free(imask_str);
 
     } else {
 
